@@ -5,40 +5,161 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <meta name="description" content="Free GWA calculator for Philippine students. Compute your semester or yearly general weighted average on a 1.00-5.00 scale, and find the grades you still need to hit your target or cum laude requirement.">
+
     <title>Philippine GWA Calculator</title>
 
     <style>
+
+        :root {
+            --tabbar-height: 58px;
+            --blue: #2563eb;
+            --line: #ddd;
+        }
 
         * {
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
             margin: 0;
+            padding: 0;
+        }
+
+        body {
             font-family: Arial, sans-serif;
             background: #f4f6f8;
             color: #222;
         }
 
-        .container {
-            width: 92%;
-            max-width: 950px;
-            margin: 40px auto;
+
+        /* =========================================
+           TOP BAR
+           ========================================= */
+
+        .topbar {
             background: white;
-            padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid var(--line);
+            padding: 14px 24px;
+            text-align: center;
         }
 
-        h1 {
-            text-align: center;
-            margin-bottom: 8px;
+        .topbar h1 {
+            margin: 0;
+            font-size: 24px;
         }
 
-        .subtitle {
-            text-align: center;
+        .topbar .subtitle {
+            margin: 4px 0 0;
             color: #666;
-            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+
+        /* =========================================
+           TWO PANE LAYOUT
+           ========================================= */
+
+        .layout {
+            display: block;
+        }
+
+        .pane {
+            background: white;
+        }
+
+        .pane-inner {
+            padding: 28px;
+        }
+
+        .pane-article .pane-inner {
+            max-width: 62ch;
+        }
+
+
+        /* =========================================
+           MOBILE TABS (hidden on desktop)
+           ========================================= */
+
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--tabbar-height);
+            display: flex;
+            background: white;
+            border-top: 1px solid var(--line);
+            z-index: 50;
+        }
+
+        .tab-btn {
+            flex: 1;
+            border: none;
+            background: none;
+            font-size: 15px;
+            color: #666;
+            cursor: pointer;
+            border-top: 3px solid transparent;
+            border-radius: 0;
+        }
+
+        .tab-btn.active {
+            color: var(--blue);
+            border-top-color: var(--blue);
+            font-weight: bold;
+        }
+
+
+        /* =========================================
+           ARTICLE TEXT
+           ========================================= */
+
+        .about-section h2 {
+            margin-top: 34px;
+        }
+
+        .about-section h3 {
+            margin-top: 26px;
+            margin-bottom: 6px;
+            font-size: 16px;
+        }
+
+        .about-section p {
+            line-height: 1.65;
+        }
+
+        .about-section h2:first-child {
+            margin-top: 0;
+        }
+
+        .scale-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+            font-size: 14px;
+        }
+
+        .scale-table th,
+        .scale-table td {
+            border: 1px solid var(--line);
+            padding: 8px 10px;
+            text-align: left;
+        }
+
+        .scale-table th {
+            background: #f1f5f9;
+        }
+
+        .worked-example {
+            background: #f1f5f9;
+            border: 1px solid var(--line);
+            border-left: 4px solid var(--blue);
+            border-radius: 8px;
+            padding: 16px 18px;
+            margin: 16px 0;
+            font-size: 14px;
+            line-height: 1.6;
         }
 
         h2 {
@@ -76,7 +197,7 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin: 20px 0 30px;
+            margin: 0 0 30px;
         }
 
         .mode-btn {
@@ -92,16 +213,16 @@
         }
 
         .mode-btn.active {
-            background: #2563eb;
+            background: var(--blue);
             color: white;
-            border-color: #2563eb;
+            border-color: var(--blue);
         }
 
         /* SETTINGS */
 
         .settings {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
         }
 
@@ -125,11 +246,20 @@
             font-size: 15px;
         }
 
+        input:focus-visible,
+        button:focus-visible {
+            outline: 2px solid var(--blue);
+            outline-offset: 2px;
+        }
+
         /* SUBJECT ROW */
 
         .subject-row {
             display: grid;
-            grid-template-columns: 2fr 0.8fr 1fr 1.5fr auto;
+            grid-template-columns: 2fr 0.8fr 1fr auto;
+            grid-template-areas:
+                "name units grade remove"
+                "check check check check";
             gap: 10px;
             margin-bottom: 12px;
             align-items: end;
@@ -138,11 +268,16 @@
             border-radius: 8px;
         }
 
+        .subject-row .field-name { grid-area: name; }
+        .subject-row .field-units { grid-area: units; }
+        .subject-row .field-grade { grid-area: grade; }
+        .subject-row .remove-btn { grid-area: remove; }
+
         .checkbox-container {
+            grid-area: check;
             display: flex;
             align-items: center;
             gap: 7px;
-            height: 40px;
         }
 
         .checkbox-container input {
@@ -189,7 +324,7 @@
         .calculate-btn {
             width: 100%;
             margin-top: 30px;
-            background: #2563eb;
+            background: var(--blue);
             color: white;
             font-size: 17px;
             padding: 15px;
@@ -265,7 +400,7 @@
         }
 
         .best-case {
-            border-left: 4px solid #2563eb;
+            border-left: 4px solid var(--blue);
         }
 
         .warning-box {
@@ -285,7 +420,30 @@
             color: #666;
         }
 
-        @media (max-width: 750px) {
+
+        /* =========================================
+           MOBILE: ONE PANE AT A TIME
+           ========================================= */
+
+        @media (max-width: 1023px) {
+
+            body {
+                padding-bottom: var(--tabbar-height);
+            }
+
+            body[data-view="calc"] .pane-article,
+            body[data-view="guide"] .pane-calc {
+                display: none;
+            }
+
+            .pane-inner {
+                padding: 20px;
+            }
+
+        }
+
+
+        @media (max-width: 620px) {
 
             .settings,
             .target-settings {
@@ -293,11 +451,15 @@
             }
 
             .subject-row {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr auto;
+                grid-template-areas:
+                    "name name"
+                    "units grade"
+                    "check remove";
             }
 
-            .container {
-                padding: 20px;
+            .subject-row .remove-btn {
+                align-self: end;
             }
 
             .mode-buttons {
@@ -310,21 +472,312 @@
 
         }
 
+
+        /* =========================================
+           DESKTOP: TWO SEPARATELY SCROLLING PANES
+           ========================================= */
+
+        @media (min-width: 1024px) {
+
+            html, body {
+                height: 100%;
+            }
+
+            body {
+                display: flex;
+                flex-direction: column;
+                overflow: hidden;
+            }
+
+            .topbar {
+                flex: 0 0 auto;
+            }
+
+            .layout {
+                flex: 1 1 auto;
+                min-height: 0;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+                gap: 1px;
+                background: var(--line);
+            }
+
+            .pane {
+                min-height: 0;
+                height: 100%;
+                overflow-y: auto;
+                overscroll-behavior: contain;
+            }
+
+            .pane-inner {
+                padding: 32px 40px 60px;
+            }
+
+            .tabbar {
+                display: none;
+            }
+
+        }
+
     </style>
 
 </head>
 
 
-<body>
+<body data-view="calc">
 
-<div class="container">
+
+<header class="topbar">
 
     <h1>GWA Calculator</h1>
 
     <p class="subtitle">
-        Calculate your semester or yearly GWA and find out what grades you need to reach your goal.
+        Work out your semester or yearly GWA, and the grades you still need.
     </p>
 
+</header>
+
+
+<div class="layout">
+
+
+<!-- =========================================
+     LEFT PANE: ARTICLE AND FAQ
+     ========================================= -->
+
+<aside class="pane pane-article" id="articlePane">
+
+<div class="pane-inner">
+
+<div class="about-section">
+
+    <h2>The Philippine Grading System</h2>
+
+    <p>
+        Most Philippine schools use a 1.00–5.00 scale where, unlike GPA systems
+        elsewhere, <strong>lower is better</strong> — 1.00 is the highest grade
+        and 5.00 means failure. This comes from the old Spanish rank-order
+        system, where 1st place got the number 1.
+    </p>
+
+    <p>
+        Not every school uses the same scale, though. Schools like UP and UST
+        use <strong>0.25 increments</strong> (1.00, 1.25, 1.50, and so on),
+        while others like DLSU and Ateneo use wider <strong>0.5 increments</strong>
+        or a percentage-based system instead. Always check your own school's
+        grading guide before relying on any calculator.
+    </p>
+
+    <table class="scale-table">
+        <thead>
+            <tr>
+                <th>Grade</th>
+                <th>Usual meaning</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>1.00 – 1.25</td><td>Excellent</td></tr>
+            <tr><td>1.50 – 1.75</td><td>Very good</td></tr>
+            <tr><td>2.00 – 2.50</td><td>Good to satisfactory</td></tr>
+            <tr><td>2.75 – 3.00</td><td>Passing</td></tr>
+            <tr><td>4.00</td><td>Conditional or for removal, in some schools</td></tr>
+            <tr><td>5.00</td><td>Failed</td></tr>
+        </tbody>
+    </table>
+
+    <p class="small-note">
+        These labels are typical, not universal. Your registrar's handbook is
+        the only version that counts.
+    </p>
+
+
+    <h2>How a Weighted Average Works</h2>
+
+    <p>
+        GWA multiplies each grade by the units of that subject, adds those
+        products together, then divides by the total units. Subjects worth
+        more units pull the average harder.
+    </p>
+
+    <div class="worked-example">
+        Calculus (5 units) at 2.00 → 10.00<br>
+        Filipino (3 units) at 1.25 → 3.75<br>
+        PE (2 units) at 1.00 → 2.00<br>
+        <br>
+        Total grade points: 15.75 &nbsp;·&nbsp; Total units: 10<br>
+        <strong>GWA = 15.75 ÷ 10 = 1.58</strong>
+        <br><br>
+        A straight average of the three grades would have given 1.42 —
+        noticeably better than the real answer, because it lets the 2-unit
+        PE grade count as much as the 5-unit major.
+    </div>
+
+
+    <h2>What's a "Grade Increment"?</h2>
+
+    <p>
+        It's the smallest step your school allows between grades. If your
+        school only gives grades like 1.00, 1.25, 1.50 — never 1.10 or 1.37 —
+        your increment is 0.25. Set this in the calculator so it can round
+        your "grade needed" result to something you could actually receive.
+    </p>
+
+
+    <h2>Semester GWA vs. Yearly GWA</h2>
+
+    <p>
+        Semester GWA only covers subjects taken in one term. Yearly GWA
+        combines both semesters, weighted by each subject's units across
+        the whole school year — not just averaging the two semester GWAs
+        together, since subjects rarely carry the same number of units.
+        This matters for honors computation, since most schools evaluate
+        Latin honors using the full-year or full-program GWA, not a single
+        term.
+    </p>
+
+
+    <h2>Latin Honors and Cum Laude</h2>
+
+    <p>
+        Cum Laude, Magna Cum Laude, and Summa Cum Laude requirements vary
+        by school, but they're almost always based on a minimum overall
+        GWA maintained consistently across every semester — not just your
+        final year. Some schools also require no grade below a certain
+        threshold (for example, no grade lower than 2.00) in any subject,
+        regardless of your overall average. Check your school's specific
+        policy, since a calculator can only tell you the GWA math, not
+        your school's full honors criteria.
+    </p>
+
+    <p>
+        Residency rules catch a lot of students by surprise too. Transferees
+        and students who shifted courses are often required to have
+        completed a minimum number of units or years in the school before
+        they can be considered at all.
+    </p>
+
+
+    <h2>Common Mistakes When Computing GWA</h2>
+
+    <p>
+        The most common error is averaging grades directly instead of
+        weighting them by units — a 1-unit PE class and a 5-unit major
+        subject should not count equally. Another common mistake is
+        forgetting that a "4.00" or conditional grade in some schools
+        isn't simply averaged in as-is; it may need to be resolved into
+        a final passing or failing grade first, depending on your
+        school's policy.
+    </p>
+
+    <p>
+        Dropped subjects, non-academic subjects like NSTP, and repeated
+        subjects also get handled differently from school to school. Some
+        count the repeat only, some count both attempts. If any of these
+        apply to you, ask your registrar which units actually enter the
+        computation before trusting a number.
+    </p>
+
+</div>
+
+
+<div class="about-section">
+
+    <h2>Frequently Asked Questions</h2>
+
+
+    <h3>How do I use this calculator?</h3>
+
+    <p>
+        Set your school's grading scale first (highest, lowest, and passing
+        grade). Then add each subject with its units and grade. Leave the
+        grade blank, or tick "Calculate grade needed," for subjects you
+        haven't finished yet. Click Calculate to see your current or
+        final GWA.
+    </p>
+
+
+    <h3>Why does it say my target GWA is "not attainable"?</h3>
+
+    <p>
+        This means that even if you scored the highest possible grade in
+        every remaining subject, your final GWA still wouldn't reach your
+        target. The calculator shows you the best GWA you could still
+        realistically achieve instead.
+    </p>
+
+
+    <h3>Why does it say my target is "already secured"?</h3>
+
+    <p>
+        This means your target is already guaranteed no matter what happens
+        in your remaining subjects — even the lowest grade on your scale in
+        everything left wouldn't bring you below your target. That's a
+        statement about the average only. You'd still need to actually pass
+        each subject.
+    </p>
+
+
+    <h3>My school doesn't use a 1.00–5.00 scale. Can I still use this?</h3>
+
+    <p>
+        Yes. Change the Highest, Lowest, and Passing Grade fields under
+        Grading Scale to match your school's system — for example, 100 as
+        highest and 65 as lowest for a percentage-based scale. The
+        calculator adjusts its math automatically based on those numbers.
+    </p>
+
+
+    <h3>What is the "Grade Increment" field for?</h3>
+
+    <p>
+        It rounds the "grade you need" result to a number your school
+        would actually give. If your school only issues grades in steps
+        of 0.25 (like 1.00, 1.25, 1.50), set the increment to 0.25 so the
+        result isn't something like "1.43," which no professor would
+        actually mark.
+    </p>
+
+
+    <h3>Do my entries stay here if I close the tab?</h3>
+
+    <p>
+        Yes. Everything is saved in your own browser only, and nothing is
+        sent anywhere. Reset Everything clears it.
+    </p>
+
+
+    <h3>Should NSTP or PE be included?</h3>
+
+    <p>
+        It depends on the school. Many exclude NSTP from the GWA entirely
+        while still requiring you to pass it. If you're unsure, compute it
+        both ways and ask your registrar which one they use.
+    </p>
+
+
+    <h3>Is this an official GWA calculation?</h3>
+
+    <p>
+        No. This tool computes GWA based on the standard weighted-average
+        formula, but only your school's registrar can issue your official
+        GWA. Always confirm with your school for anything that affects
+        honors, scholarships, or academic standing.
+    </p>
+
+</div>
+
+</div>
+
+</aside>
+
+
+<!-- =========================================
+     RIGHT PANE: CALCULATOR
+     ========================================= -->
+
+<main class="pane pane-calc" id="calcPane">
+
+<div class="pane-inner">
 
     <!-- CALCULATION MODE -->
 
@@ -598,6 +1051,39 @@
 
 </div>
 
+</main>
+
+</div>
+
+
+<!-- =========================================
+     MOBILE TAB BAR
+     ========================================= -->
+
+<nav class="tabbar">
+
+    <button
+        class="tab-btn active"
+        id="tabCalc"
+        type="button"
+        onclick="setView('calc')">
+
+        Calculator
+
+    </button>
+
+    <button
+        class="tab-btn"
+        id="tabGuide"
+        type="button"
+        onclick="setView('guide')">
+
+        Guide &amp; FAQ
+
+    </button>
+
+</nav>
+
 
 <script>
 
@@ -615,6 +1101,35 @@ let currentMode = "semester";
 let rowCounter = 0;
 
 let restoring = false;
+
+
+/* =========================================
+   MOBILE VIEW SWITCHING
+
+   On desktop both panes are always visible,
+   so this only matters on narrow screens.
+   ========================================= */
+
+function setView(view) {
+
+    document.body.setAttribute("data-view", view);
+
+    document.getElementById("tabCalc")
+        .classList.toggle("active", view === "calc");
+
+    document.getElementById("tabGuide")
+        .classList.toggle("active", view === "guide");
+
+    window.scrollTo({ top: 0 });
+
+}
+
+
+function isNarrow() {
+
+    return window.matchMedia("(max-width: 1023px)").matches;
+
+}
 
 
 /* =========================================
@@ -800,7 +1315,7 @@ function addSubject(containerId, values) {
 
     row.innerHTML = `
 
-        <div>
+        <div class="field-name">
 
             <label for="${nameId}">Subject</label>
 
@@ -814,7 +1329,7 @@ function addSubject(containerId, values) {
         </div>
 
 
-        <div>
+        <div class="field-units">
 
             <label for="${unitsId}">Units</label>
 
@@ -830,7 +1345,7 @@ function addSubject(containerId, values) {
         </div>
 
 
-        <div>
+        <div class="field-grade">
 
             <label for="${gradeId}">Grade</label>
 
@@ -843,6 +1358,17 @@ function addSubject(containerId, values) {
                 oninput="onSettingChange()">
 
         </div>
+
+
+        <button
+            class="remove-btn"
+            type="button"
+            aria-label="Remove subject"
+            onclick="removeSubject(this)">
+
+            X
+
+        </button>
 
 
         <div class="checkbox-container">
@@ -858,16 +1384,6 @@ function addSubject(containerId, values) {
             </label>
 
         </div>
-
-
-        <button
-            class="remove-btn"
-            type="button"
-            onclick="removeSubject(this)">
-
-            X
-
-        </button>
 
     `;
 
@@ -914,7 +1430,7 @@ function addSubject(containerId, values) {
 
 function removeSubject(button) {
 
-    button.parentElement.remove();
+    button.closest(".subject-row").remove();
 
     clearResults();
 
@@ -1035,9 +1551,9 @@ function showError(message) {
 
     error.style.display = "block";
 
-    window.scrollTo({
-        top: error.offsetTop - 30,
-        behavior: "smooth"
+    error.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
     });
 
 }
@@ -1501,8 +2017,7 @@ function targetAnalysis(data, target, scale) {
 
     /*
      * If even the worst possible outcome still meets the
-     * target, the target is already locked in. This is the
-     * case the old version wrongly reported as impossible.
+     * target, the target is already locked in.
      */
 
     if (meetsTarget(result.worstCase, target, scale)) {
@@ -1550,11 +2065,6 @@ function passingText(scale) {
 
 /* =========================================
    PASSING RESULT
-
-   Reports the GWA that results if EVERY remaining
-   subject lands exactly on the passing grade, so the
-   number is accurate no matter how many subjects
-   are still blank.
    ========================================= */
 
 function passingResult(data, scale) {
@@ -2060,7 +2570,9 @@ function readInputs(containerIds) {
 
 function showResults(title, gwa, html) {
 
-    document.getElementById("result").style.display = "block";
+    const result = document.getElementById("result");
+
+    result.style.display = "block";
 
     document.getElementById("resultTitle").textContent = title;
 
@@ -2068,6 +2580,11 @@ function showResults(title, gwa, html) {
         gwa === null ? "--" : formatGrade(gwa);
 
     document.getElementById("resultDetails").innerHTML = html;
+
+    result.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
 
 }
 
@@ -2442,6 +2959,18 @@ function calculateYearly() {
    ========================================= */
 
 function calculate() {
+
+    /*
+     * On a narrow screen the guide tab could be open,
+     * so make sure the calculator is the visible pane.
+     */
+
+    if (isNarrow()) {
+
+        setView("calc");
+
+    }
+
 
     if (currentMode === "semester") {
 
