@@ -1,0 +1,2720 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Philippine GWA Calculator</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 950px;
+            margin: 40px auto;
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            margin-top: 30px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        /* RESULT HEADERS */
+
+        .result h2 {
+            text-align: center;
+            border-bottom: none;
+            margin-top: 0;
+            padding-bottom: 0;
+        }
+
+        .result-box > strong {
+            display: block;
+            text-align: center;
+            font-size: 18px;
+            margin-bottom: 12px;
+        }
+
+        .result-box p strong {
+            display: inline;
+            font-size: inherit;
+            text-align: left;
+            margin: 0;
+        }
+
+        /* MODE BUTTONS */
+
+        .mode-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0 30px;
+        }
+
+        .mode-btn {
+            flex: 1;
+            max-width: 300px;
+            padding: 14px;
+            border: 1px solid #ccc;
+            background: white;
+            color: #333;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .mode-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        /* SETTINGS */
+
+        .settings {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .target-settings {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 6px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        /* SUBJECT ROW */
+
+        .subject-row {
+            display: grid;
+            grid-template-columns: 2fr 0.8fr 1fr 1.5fr auto;
+            gap: 10px;
+            margin-bottom: 12px;
+            align-items: end;
+            padding: 12px;
+            border: 1px solid #e2e2e2;
+            border-radius: 8px;
+        }
+
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            height: 40px;
+        }
+
+        .checkbox-container input {
+            width: auto;
+            margin: 0;
+            cursor: pointer;
+            min-width: 20px;
+            min-height: 20px;
+        }
+
+        .checkbox-container label {
+            font-weight: normal;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .grade-input.disabled {
+            background: #eee;
+            color: #888;
+        }
+
+        /* BUTTONS */
+
+        button {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 7px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .add-btn {
+            margin-top: 5px;
+            background: #333;
+            color: white;
+        }
+
+        .remove-btn {
+            background: #dc2626;
+            color: white;
+            height: 40px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            margin-top: 30px;
+            background: #2563eb;
+            color: white;
+            font-size: 17px;
+            padding: 15px;
+        }
+
+        .reset-btn {
+            width: 100%;
+            margin-top: 12px;
+            background: white;
+            color: #555;
+            border: 1px solid #ccc;
+            font-size: 15px;
+            padding: 12px;
+        }
+
+        /* NOTICE */
+
+        .notice {
+            background: #fff7ed;
+            border: 1px solid #fdba74;
+            color: #9a3412;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        /* RESULTS */
+
+        .result {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .gwa-number {
+            font-size: 42px;
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0 20px;
+        }
+
+        .result-box {
+            background: white;
+            padding: 18px;
+            margin-top: 12px;
+            border-radius: 8px;
+            line-height: 1.6;
+        }
+
+        .subject-result {
+            padding: 5px 0;
+        }
+
+        .semester-section {
+            margin-top: 25px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .best-case {
+            border-left: 4px solid #2563eb;
+        }
+
+        .warning-box {
+            border-left: 4px solid #dc2626;
+        }
+
+        .success-box {
+            border-left: 4px solid #16a34a;
+        }
+
+        .info-box {
+            border-left: 4px solid #64748b;
+        }
+
+        .small-note {
+            font-size: 13px;
+            color: #666;
+        }
+
+        @media (max-width: 750px) {
+
+            .settings,
+            .target-settings {
+                grid-template-columns: 1fr;
+            }
+
+            .subject-row {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 20px;
+            }
+
+            .mode-buttons {
+                flex-direction: column;
+            }
+
+            .mode-btn {
+                max-width: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <h1>GWA Calculator</h1>
+
+    <p class="subtitle">
+        Calculate your semester or yearly GWA and find out what grades you need to reach your goal.
+    </p>
+
+
+    <!-- CALCULATION MODE -->
+
+    <div class="mode-buttons">
+
+        <button
+            class="mode-btn active"
+            id="semesterBtn"
+            type="button"
+            onclick="setMode('semester')">
+
+            Semester GWA
+
+        </button>
+
+        <button
+            class="mode-btn"
+            id="yearlyBtn"
+            type="button"
+            onclick="setMode('yearly')">
+
+            Yearly GWA
+
+        </button>
+
+    </div>
+
+
+    <!-- GRADING SCALE -->
+
+    <h2>Grading Scale</h2>
+
+    <div class="settings">
+
+        <div>
+
+            <label for="highestGrade">Highest Attainable Grade</label>
+
+            <input
+                type="number"
+                id="highestGrade"
+                value="1.00"
+                step="0.01"
+                oninput="onSettingChange()">
+
+        </div>
+
+
+        <div>
+
+            <label for="lowestGrade">Lowest Attainable Grade</label>
+
+            <input
+                type="number"
+                id="lowestGrade"
+                value="5.00"
+                step="0.01"
+                oninput="onSettingChange()">
+
+        </div>
+
+
+        <div>
+
+            <label for="passingGrade">Minimum Passing Grade</label>
+
+            <input
+                type="number"
+                id="passingGrade"
+                value="3.00"
+                step="0.01"
+                oninput="onSettingChange()">
+
+        </div>
+
+
+        <div>
+
+            <label for="gradeStep">Grade Increment (Optional)</label>
+
+            <input
+                type="number"
+                id="gradeStep"
+                placeholder="Example: 0.25"
+                min="0"
+                step="0.01"
+                oninput="onSettingChange()">
+
+        </div>
+
+    </div>
+
+
+    <p class="small-note">
+        The grade increment is the smallest step your school uses between grades
+        (for example 0.25 for 1.00, 1.25, 1.50). Leave it blank if your school
+        gives exact numbers instead.
+    </p>
+
+
+    <!-- TARGETS -->
+
+    <h2>Targets</h2>
+
+    <div class="target-settings">
+
+        <div>
+
+            <label for="targetGWA">Target GWA (Optional)</label>
+
+            <input
+                type="number"
+                id="targetGWA"
+                placeholder="Example: 1.50"
+                step="0.01"
+                oninput="updateCheckboxes(); onSettingChange();">
+
+        </div>
+
+
+        <div>
+
+            <label for="cumLaudeGWA">Cum Laude Target GWA (Optional)</label>
+
+            <input
+                type="number"
+                id="cumLaudeGWA"
+                placeholder="Example: 1.75"
+                step="0.01"
+                oninput="onSettingChange()">
+
+        </div>
+
+    </div>
+
+
+    <p class="small-note">
+        Note: Actual Latin honors eligibility may depend on your school's specific
+        rules in addition to the GWA requirement.
+    </p>
+
+
+    <!-- NOTICE -->
+
+    <div
+        class="notice"
+        id="targetNotice">
+
+        ⚠️ Enter a <strong>Target GWA</strong> first if you want to
+        mark subjects as "Calculate grade needed."
+
+    </div>
+
+
+    <div
+        class="error-message"
+        id="errorMessage">
+    </div>
+
+
+    <!-- SEMESTER MODE -->
+
+    <div id="semesterMode">
+
+        <h2>Subjects</h2>
+
+        <div id="semesterSubjects"></div>
+
+        <button
+            class="add-btn"
+            type="button"
+            onclick="addSubject('semesterSubjects')">
+
+            + Add Subject
+
+        </button>
+
+    </div>
+
+
+    <!-- YEARLY MODE -->
+
+    <div
+        id="yearlyMode"
+        class="hidden">
+
+
+        <div class="semester-section">
+
+            <h2>1st Semester</h2>
+
+            <div id="firstSemesterSubjects"></div>
+
+            <button
+                class="add-btn"
+                type="button"
+                onclick="addSubject('firstSemesterSubjects')">
+
+                + Add 1st Semester Subject
+
+            </button>
+
+        </div>
+
+
+        <div class="semester-section">
+
+            <h2>2nd Semester</h2>
+
+            <div id="secondSemesterSubjects"></div>
+
+            <button
+                class="add-btn"
+                type="button"
+                onclick="addSubject('secondSemesterSubjects')">
+
+                + Add 2nd Semester Subject
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- CALCULATE BUTTON -->
+
+    <button
+        class="calculate-btn"
+        type="button"
+        onclick="calculate()">
+
+        Calculate GWA
+
+    </button>
+
+
+    <button
+        class="reset-btn"
+        type="button"
+        onclick="resetAll()">
+
+        Reset Everything
+
+    </button>
+
+
+    <!-- RESULTS -->
+
+    <div
+        class="result"
+        id="result">
+
+        <h2 id="resultTitle">
+            Your GWA
+        </h2>
+
+
+        <div
+            class="gwa-number"
+            id="gwaResult">
+
+            --
+
+        </div>
+
+
+        <div id="resultDetails"></div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+
+/* =========================================
+   CONSTANTS AND STATE
+   ========================================= */
+
+const EPS = 1e-9;
+
+const STORAGE_KEY = "gwa-calculator-state-v1";
+
+let currentMode = "semester";
+
+let rowCounter = 0;
+
+let restoring = false;
+
+
+/* =========================================
+   HTML ESCAPING
+
+   Every value that comes from a text input is
+   passed through this before being inserted
+   into the results with innerHTML.
+   ========================================= */
+
+function esc(value) {
+
+    return String(value).replace(/[&<>"']/g, function (character) {
+
+        return {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[character];
+
+    });
+
+}
+
+
+/* =========================================
+   SMALL HELPERS
+   ========================================= */
+
+function formatGrade(value) {
+
+    if (!Number.isFinite(value)) {
+
+        return "--";
+
+    }
+
+    return Number(value).toFixed(2);
+
+}
+
+
+function unitLabel(units) {
+
+    return units + " unit" + (units !== 1 ? "s" : "");
+
+}
+
+
+/*
+ * Tolerant comparison so that a GWA that computes to
+ * 1.7500000000000002 still counts as reaching a target of 1.75.
+ */
+
+function meetsTarget(value, target, scale) {
+
+    return scale.lowerIsBetter
+        ? value <= target + EPS
+        : value >= target - EPS;
+
+}
+
+
+function withinScale(value, scale) {
+
+    return scale.lowerIsBetter
+        ? value >= scale.highest - EPS && value <= scale.lowest + EPS
+        : value <= scale.highest + EPS && value >= scale.lowest - EPS;
+
+}
+
+
+/*
+ * Converts a required average into the nearest grade a
+ * school would actually give, rounded in the safe direction.
+ */
+
+function attainableGrade(required, scale) {
+
+    const step = scale.step;
+
+
+    if (!Number.isFinite(step) || step <= 0) {
+
+        return null;
+
+    }
+
+
+    let grade;
+
+
+    if (scale.lowerIsBetter) {
+
+        const steps =
+            Math.floor((required - scale.highest) / step + EPS);
+
+        grade = scale.highest + steps * step;
+
+    }
+
+    else {
+
+        const steps =
+            Math.ceil((required - scale.lowest) / step - EPS);
+
+        grade = scale.lowest + steps * step;
+
+    }
+
+
+    if (!withinScale(grade, scale)) {
+
+        return null;
+
+    }
+
+
+    return grade;
+
+}
+
+
+/* =========================================
+   CHANGE MODE
+   ========================================= */
+
+function setMode(mode) {
+
+    currentMode = mode;
+
+    const semesterBtn = document.getElementById("semesterBtn");
+    const yearlyBtn = document.getElementById("yearlyBtn");
+    const semesterMode = document.getElementById("semesterMode");
+    const yearlyMode = document.getElementById("yearlyMode");
+
+
+    if (mode === "semester") {
+
+        semesterBtn.classList.add("active");
+        yearlyBtn.classList.remove("active");
+        semesterMode.classList.remove("hidden");
+        yearlyMode.classList.add("hidden");
+
+    }
+
+    else {
+
+        yearlyBtn.classList.add("active");
+        semesterBtn.classList.remove("active");
+        semesterMode.classList.add("hidden");
+        yearlyMode.classList.remove("hidden");
+
+    }
+
+    clearResults();
+
+    saveState();
+
+}
+
+
+/* =========================================
+   ADD SUBJECT
+   ========================================= */
+
+function addSubject(containerId, values) {
+
+    const container = document.getElementById(containerId);
+
+    const row = document.createElement("div");
+
+    rowCounter += 1;
+
+    const nameId = "subject-name-" + rowCounter;
+    const unitsId = "subject-units-" + rowCounter;
+    const gradeId = "subject-grade-" + rowCounter;
+    const checkId = "subject-check-" + rowCounter;
+
+    row.className = "subject-row";
+
+    row.innerHTML = `
+
+        <div>
+
+            <label for="${nameId}">Subject</label>
+
+            <input
+                type="text"
+                id="${nameId}"
+                class="subject-name"
+                placeholder="e.g. Calculus 1"
+                oninput="onSettingChange()">
+
+        </div>
+
+
+        <div>
+
+            <label for="${unitsId}">Units</label>
+
+            <input
+                type="number"
+                id="${unitsId}"
+                class="units"
+                placeholder="3"
+                min="0"
+                step="0.5"
+                oninput="onSettingChange()">
+
+        </div>
+
+
+        <div>
+
+            <label for="${gradeId}">Grade</label>
+
+            <input
+                type="number"
+                id="${gradeId}"
+                class="grade grade-input"
+                placeholder="1.75"
+                step="0.01"
+                oninput="onSettingChange()">
+
+        </div>
+
+
+        <div class="checkbox-container">
+
+            <input
+                type="checkbox"
+                id="${checkId}"
+                class="needs-grade"
+                onchange="toggleGrade(this)">
+
+            <label for="${checkId}">
+                Calculate grade needed
+            </label>
+
+        </div>
+
+
+        <button
+            class="remove-btn"
+            type="button"
+            onclick="removeSubject(this)">
+
+            X
+
+        </button>
+
+    `;
+
+    container.appendChild(row);
+
+
+    if (values) {
+
+        row.querySelector(".subject-name").value = values.name || "";
+        row.querySelector(".units").value = values.units || "";
+        row.querySelector(".grade").value = values.grade || "";
+
+        const checkbox = row.querySelector(".needs-grade");
+
+        checkbox.checked = Boolean(values.needsGrade);
+
+        if (checkbox.checked) {
+
+            const grade = row.querySelector(".grade");
+
+            grade.value = "";
+            grade.disabled = true;
+            grade.classList.add("disabled");
+
+        }
+
+    }
+
+
+    updateCheckboxes();
+
+    if (!restoring) {
+
+        saveState();
+
+    }
+
+}
+
+
+/* =========================================
+   REMOVE SUBJECT
+   ========================================= */
+
+function removeSubject(button) {
+
+    button.parentElement.remove();
+
+    clearResults();
+
+    saveState();
+
+}
+
+
+/* =========================================
+   ENABLE / DISABLE CHECKBOXES
+   ========================================= */
+
+function updateCheckboxes() {
+
+    const target =
+        document.getElementById("targetGWA").value.trim();
+
+    const checkboxes =
+        document.querySelectorAll(".needs-grade");
+
+    const notice =
+        document.getElementById("targetNotice");
+
+
+    if (target === "") {
+
+        notice.style.display = "block";
+
+        checkboxes.forEach(function (box) {
+
+            box.checked = false;
+            box.disabled = true;
+
+            const row = box.closest(".subject-row");
+            const grade = row.querySelector(".grade");
+
+            grade.disabled = false;
+            grade.classList.remove("disabled");
+
+        });
+
+    }
+
+    else {
+
+        notice.style.display = "none";
+
+        checkboxes.forEach(function (box) {
+
+            box.disabled = false;
+
+        });
+
+    }
+
+}
+
+
+/* =========================================
+   TOGGLE GRADE
+   ========================================= */
+
+function toggleGrade(checkbox) {
+
+    const row = checkbox.closest(".subject-row");
+    const grade = row.querySelector(".grade");
+
+
+    if (checkbox.checked) {
+
+        grade.value = "";
+        grade.disabled = true;
+        grade.classList.add("disabled");
+
+    }
+
+    else {
+
+        grade.disabled = false;
+        grade.classList.remove("disabled");
+
+    }
+
+    clearResults();
+
+    saveState();
+
+}
+
+
+/* =========================================
+   RESULT AND ERROR VISIBILITY
+   ========================================= */
+
+function clearResults() {
+
+    document.getElementById("result").style.display = "none";
+
+    hideError();
+
+}
+
+
+function onSettingChange() {
+
+    clearResults();
+
+    saveState();
+
+}
+
+
+function showError(message) {
+
+    const error = document.getElementById("errorMessage");
+
+    error.textContent = "⚠️ " + message;
+
+    error.style.display = "block";
+
+    window.scrollTo({
+        top: error.offsetTop - 30,
+        behavior: "smooth"
+    });
+
+}
+
+
+function hideError() {
+
+    document.getElementById("errorMessage").style.display = "none";
+
+}
+
+
+/* =========================================
+   GET GRADING SCALE
+   ========================================= */
+
+function getScale() {
+
+    const highest =
+        parseFloat(document.getElementById("highestGrade").value);
+
+    const lowest =
+        parseFloat(document.getElementById("lowestGrade").value);
+
+    const passing =
+        parseFloat(document.getElementById("passingGrade").value);
+
+    const stepRaw =
+        document.getElementById("gradeStep").value.trim();
+
+    const step =
+        stepRaw === "" ? NaN : parseFloat(stepRaw);
+
+
+    if (
+        !Number.isFinite(highest)
+        ||
+        !Number.isFinite(lowest)
+        ||
+        !Number.isFinite(passing)
+    ) {
+
+        return {
+            valid: false,
+            message: "Please enter a valid highest grade, lowest grade, and passing grade."
+        };
+
+    }
+
+
+    if (highest === lowest) {
+
+        return {
+            valid: false,
+            message: "The highest and lowest attainable grades cannot be the same."
+        };
+
+    }
+
+
+    if (stepRaw !== "" && (!Number.isFinite(step) || step <= 0)) {
+
+        return {
+            valid: false,
+            message: "The grade increment must be a number greater than 0, or left blank."
+        };
+
+    }
+
+
+    const lowerIsBetter = highest < lowest;
+
+
+    const scale = {
+        valid: true,
+        highest: highest,
+        lowest: lowest,
+        passing: passing,
+        step: step,
+        lowerIsBetter: lowerIsBetter
+    };
+
+
+    if (!withinScale(passing, scale)) {
+
+        return {
+            valid: false,
+            message: "Your minimum passing grade must be within your grading scale."
+        };
+
+    }
+
+
+    return scale;
+
+}
+
+
+/* =========================================
+   VALIDATE TARGET
+   ========================================= */
+
+function validateTarget(value, scale, label) {
+
+    if (isNaN(value)) {
+
+        return { valid: true };
+
+    }
+
+
+    if (!withinScale(value, scale)) {
+
+        return {
+            valid: false,
+            message:
+                label
+                + " must be between "
+                + formatGrade(scale.highest)
+                + " and "
+                + formatGrade(scale.lowest)
+                + " based on your grading scale."
+        };
+
+    }
+
+
+    return { valid: true };
+
+}
+
+
+/* =========================================
+   VALIDATE SUBJECTS
+   ========================================= */
+
+function validateSubjects(containerIds, scale) {
+
+    let foundSubject = false;
+
+
+    for (const containerId of containerIds) {
+
+        const rows =
+            document
+            .getElementById(containerId)
+            .querySelectorAll(".subject-row");
+
+
+        for (const row of rows) {
+
+            const name =
+                row.querySelector(".subject-name").value.trim();
+
+            const units =
+                parseFloat(row.querySelector(".units").value);
+
+            const grade =
+                parseFloat(row.querySelector(".grade").value);
+
+            const needsGrade =
+                row.querySelector(".needs-grade").checked;
+
+
+            const hasAnyInput =
+                name !== ""
+                ||
+                !isNaN(units)
+                ||
+                !isNaN(grade)
+                ||
+                needsGrade;
+
+
+            /*
+             * Completely empty rows are ignored so the user can
+             * keep an unused subject row on the page.
+             */
+
+            if (!hasAnyInput) {
+
+                continue;
+
+            }
+
+
+            foundSubject = true;
+
+
+            if (name === "") {
+
+                return {
+                    valid: false,
+                    message: "Please enter a subject name for every subject you are using."
+                };
+
+            }
+
+
+            if (!Number.isFinite(units) || units <= 0) {
+
+                return {
+                    valid: false,
+                    message: name + ": Please enter a valid number of units greater than 0."
+                };
+
+            }
+
+
+            /*
+             * When the checkbox is ticked the grade is
+             * intentionally blank, so there is nothing to check.
+             */
+
+            if (needsGrade) {
+
+                if (document.getElementById("targetGWA").value.trim() === "") {
+
+                    return {
+                        valid: false,
+                        message: "Please enter a Target GWA before using the Calculate Grade Needed checkbox."
+                    };
+
+                }
+
+                continue;
+
+            }
+
+
+            /*
+             * A blank grade is allowed. It simply means the
+             * subject does not have a grade yet.
+             */
+
+            if (isNaN(grade)) {
+
+                continue;
+
+            }
+
+
+            if (!withinScale(grade, scale)) {
+
+                return {
+                    valid: false,
+                    message:
+                        name
+                        + ": Grade "
+                        + formatGrade(grade)
+                        + " is outside your grading scale of "
+                        + formatGrade(scale.highest)
+                        + " to "
+                        + formatGrade(scale.lowest)
+                        + "."
+                };
+
+            }
+
+        }
+
+    }
+
+
+    if (!foundSubject) {
+
+        return {
+            valid: false,
+            message: "Please enter at least one subject."
+        };
+
+    }
+
+
+    return { valid: true };
+
+}
+
+
+/* =========================================
+   GET SUBJECT DATA
+   ========================================= */
+
+function getSubjects(containerId) {
+
+    const rows =
+        document
+        .getElementById(containerId)
+        .querySelectorAll(".subject-row");
+
+
+    let completedWeighted = 0;
+    let completedUnits = 0;
+    let blankUnits = 0;
+    let totalUnits = 0;
+
+    const completedSubjects = [];
+    const blankSubjects = [];
+
+
+    rows.forEach(function (row) {
+
+        const name =
+            row.querySelector(".subject-name").value.trim()
+            ||
+            "Unnamed Subject";
+
+        const units =
+            parseFloat(row.querySelector(".units").value);
+
+        const grade =
+            parseFloat(row.querySelector(".grade").value);
+
+        const needsGrade =
+            row.querySelector(".needs-grade").checked;
+
+
+        if (isNaN(units) || units <= 0) {
+
+            return;
+
+        }
+
+
+        totalUnits += units;
+
+
+        if (needsGrade || isNaN(grade)) {
+
+            blankUnits += units;
+
+            blankSubjects.push({
+                name: name,
+                units: units
+            });
+
+        }
+
+        else {
+
+            completedWeighted += grade * units;
+            completedUnits += units;
+
+            completedSubjects.push({
+                name: name,
+                units: units,
+                grade: grade
+            });
+
+        }
+
+    });
+
+
+    return {
+        completedWeighted: completedWeighted,
+        completedUnits: completedUnits,
+        blankUnits: blankUnits,
+        totalUnits: totalUnits,
+        completedSubjects: completedSubjects,
+        blankSubjects: blankSubjects
+    };
+
+}
+
+
+/* =========================================
+   CORE CALCULATIONS
+   ========================================= */
+
+function calculateCurrentGWA(data) {
+
+    if (data.completedUnits <= 0) {
+
+        return null;
+
+    }
+
+    return data.completedWeighted / data.completedUnits;
+
+}
+
+
+function calculateBestCase(data, scale) {
+
+    if (data.totalUnits <= 0) {
+
+        return null;
+
+    }
+
+    return (
+        data.completedWeighted + scale.highest * data.blankUnits
+    ) / data.totalUnits;
+
+}
+
+
+function calculateWorstCase(data, scale) {
+
+    if (data.totalUnits <= 0) {
+
+        return null;
+
+    }
+
+    return (
+        data.completedWeighted + scale.lowest * data.blankUnits
+    ) / data.totalUnits;
+
+}
+
+
+/* =========================================
+   TARGET ANALYSIS
+   ========================================= */
+
+function targetAnalysis(data, target, scale) {
+
+    const result = {
+        attainable: true,
+        guaranteed: false,
+        requiredAverage: null,
+        bestCase: null,
+        worstCase: null
+    };
+
+
+    if (data.totalUnits <= 0) {
+
+        return result;
+
+    }
+
+
+    result.bestCase = calculateBestCase(data, scale);
+    result.worstCase = calculateWorstCase(data, scale);
+
+
+    if (data.blankUnits <= 0) {
+
+        const finalGWA =
+            data.completedWeighted / data.completedUnits;
+
+        result.attainable = meetsTarget(finalGWA, target, scale);
+
+        return result;
+
+    }
+
+
+    /*
+     * The exact weighted average required across the
+     * remaining subjects.
+     */
+
+    result.requiredAverage =
+        (target * data.totalUnits - data.completedWeighted)
+        / data.blankUnits;
+
+
+    /*
+     * If even the worst possible outcome still meets the
+     * target, the target is already locked in. This is the
+     * case the old version wrongly reported as impossible.
+     */
+
+    if (meetsTarget(result.worstCase, target, scale)) {
+
+        result.guaranteed = true;
+
+        return result;
+
+    }
+
+
+    /*
+     * Otherwise the target is out of reach only when the
+     * best possible outcome still falls short.
+     */
+
+    if (!meetsTarget(result.bestCase, target, scale)) {
+
+        result.attainable = false;
+
+    }
+
+
+    return result;
+
+}
+
+
+/* =========================================
+   PASSING GRADE INFORMATION
+   ========================================= */
+
+function passingText(scale) {
+
+    const direction = scale.lowerIsBetter ? "or lower" : "or higher";
+
+    return "A grade of <strong>"
+        + formatGrade(scale.passing)
+        + "</strong> "
+        + direction
+        + " is required to pass.";
+
+}
+
+
+/* =========================================
+   PASSING RESULT
+
+   Reports the GWA that results if EVERY remaining
+   subject lands exactly on the passing grade, so the
+   number is accurate no matter how many subjects
+   are still blank.
+   ========================================= */
+
+function passingResult(data, scale) {
+
+    if (data.blankSubjects.length === 0) {
+
+        return `
+            <div class="result-box">
+
+                <strong>Passing Grade</strong>
+
+                <p>${passingText(scale)}</p>
+
+                <p>All of your subjects already have grades.</p>
+
+            </div>
+        `;
+
+    }
+
+
+    const resultingGWA =
+        (data.completedWeighted + scale.passing * data.blankUnits)
+        / data.totalUnits;
+
+
+    let html = `
+
+        <div class="result-box info-box">
+
+            <strong>If You Only Pass Your Remaining Subjects</strong>
+
+            <p>${passingText(scale)}</p>
+
+    `;
+
+
+    if (data.blankSubjects.length === 1) {
+
+        const subject = data.blankSubjects[0];
+
+        html += `
+            <p>
+                If ${esc(subject.name)} finishes with exactly
+                <strong>${formatGrade(scale.passing)}</strong>,
+                your resulting GWA would be
+                <strong>${formatGrade(resultingGWA)}</strong>.
+            </p>
+        `;
+
+    }
+
+    else {
+
+        html += `
+            <p>
+                If all
+                <strong>${data.blankSubjects.length}</strong>
+                of your remaining subjects finish with exactly
+                <strong>${formatGrade(scale.passing)}</strong>,
+                your resulting GWA would be
+                <strong>${formatGrade(resultingGWA)}</strong>.
+            </p>
+        `;
+
+        data.blankSubjects.forEach(function (subject) {
+
+            html += `
+                <div class="subject-result">
+                    • ${esc(subject.name)} (${unitLabel(subject.units)})
+                </div>
+            `;
+
+        });
+
+    }
+
+
+    html += `
+        </div>
+    `;
+
+
+    return html;
+
+}
+
+
+/* =========================================
+   TARGET RESULT
+   ========================================= */
+
+function targetResult(data, target, title, scale) {
+
+    const analysis = targetAnalysis(data, target, scale);
+
+    let html = "";
+
+
+    /*
+     * CASE 1: every subject already has a grade.
+     */
+
+    if (data.blankUnits <= 0) {
+
+        const finalGWA =
+            data.completedWeighted / data.completedUnits;
+
+        const reached = meetsTarget(finalGWA, target, scale);
+
+        html += `
+
+            <div class="result-box ${reached ? "success-box" : "warning-box"}">
+
+                <strong>${esc(title)}</strong>
+
+                <p>
+                    Your final GWA of
+                    <strong>${formatGrade(finalGWA)}</strong>
+                    ${reached ? "has reached" : "has not reached"}
+                    your target of
+                    <strong>${formatGrade(target)}</strong>.
+                </p>
+
+            </div>
+
+        `;
+
+        return html;
+
+    }
+
+
+    /*
+     * CASE 2: the target is already locked in.
+     */
+
+    if (analysis.guaranteed) {
+
+        html += `
+
+            <div class="result-box success-box">
+
+                <strong>${esc(title)}</strong>
+
+                <p>
+                    Your target of
+                    <strong>${formatGrade(target)}</strong>
+                    is already secured.
+                    Even if you receive the lowest attainable grade of
+                    <strong>${formatGrade(scale.lowest)}</strong>
+                    in every remaining subject,
+                    your final GWA would be
+                    <strong>${formatGrade(analysis.worstCase)}</strong>,
+                    which still meets your target.
+                </p>
+
+                <p class="small-note">
+                    You still need at least
+                    ${formatGrade(scale.passing)}
+                    in each subject in order to pass it.
+                </p>
+
+            </div>
+
+        `;
+
+        return html;
+
+    }
+
+
+    /*
+     * CASE 3: the target cannot be reached.
+     */
+
+    if (!analysis.attainable) {
+
+        const difference =
+            Math.abs(analysis.bestCase - target);
+
+        html += `
+
+            <div class="result-box warning-box">
+
+                <strong>Target GWA Is Not Attainable</strong>
+
+                <p>
+                    Your target GWA of
+                    <strong>${formatGrade(target)}</strong>
+                    cannot be reached with the remaining subjects
+                    using the grading scale you entered.
+                </p>
+
+                <p>
+                    If you receive the highest attainable grade of
+                    <strong>${formatGrade(scale.highest)}</strong>
+                    in every remaining subject,
+                    your best possible final GWA would be
+                    <strong>${formatGrade(analysis.bestCase)}</strong>.
+                </p>
+
+                <p>
+                    That is
+                    <strong>${formatGrade(difference)}</strong>
+                    away from your target.
+                </p>
+
+            </div>
+
+
+            <div class="result-box best-case">
+
+                <strong>Best Possible Result</strong>
+
+                <p>
+                    To get the best possible result, you would need
+                    <strong>${formatGrade(scale.highest)}</strong>
+                    in all remaining subjects.
+                </p>
+
+        `;
+
+        data.blankSubjects.forEach(function (subject) {
+
+            html += `
+                <div class="subject-result">
+                    • ${esc(subject.name)} (${unitLabel(subject.units)})
+                    → <strong>${formatGrade(scale.highest)}</strong>
+                </div>
+            `;
+
+        });
+
+        html += `
+            </div>
+        `;
+
+        return html;
+
+    }
+
+
+    /*
+     * CASE 4: the target is reachable but not guaranteed.
+     */
+
+    const rounded = attainableGrade(analysis.requiredAverage, scale);
+
+    html += `
+
+        <div class="result-box">
+
+            <strong>${esc(title)}</strong>
+
+            <p>
+                To reach your target GWA of
+                <strong>${formatGrade(target)}</strong>,
+                you need an average of approximately
+                <strong>${formatGrade(analysis.requiredAverage)}</strong>
+                across your remaining subjects.
+            </p>
+
+    `;
+
+
+    if (rounded !== null) {
+
+        html += `
+            <p>
+                Using your school's grade increment, that means an
+                average of
+                <strong>${formatGrade(rounded)}</strong>
+                or better.
+            </p>
+        `;
+
+    }
+
+
+    html += `
+
+            <p class="small-note">
+                This is a weighted average based on the number of
+                units of each remaining subject.
+            </p>
+
+        </div>
+
+    `;
+
+
+    if (data.blankSubjects.length === 1) {
+
+        const subject = data.blankSubjects[0];
+
+        html += `
+
+            <div class="result-box">
+
+                <strong>What ${esc(subject.name)} Needs</strong>
+
+                <p>
+                    Since ${esc(subject.name)} is your only remaining
+                    subject, you need approximately
+                    <strong>${formatGrade(analysis.requiredAverage)}</strong>
+                    ${rounded !== null
+                        ? "(a grade of <strong>" + formatGrade(rounded) + "</strong> or better)"
+                        : ""}
+                    in it to finish with a GWA of
+                    <strong>${formatGrade(target)}</strong>.
+                </p>
+
+            </div>
+
+        `;
+
+    }
+
+    else {
+
+        html += `
+
+            <div class="result-box info-box">
+
+                <strong>Your Remaining Subjects</strong>
+
+                <p>
+                    You have
+                    <strong>${data.blankSubjects.length}</strong>
+                    remaining subjects. The
+                    <strong>${formatGrade(analysis.requiredAverage)}</strong>
+                    requirement is an average across them, weighted by units.
+                </p>
+
+        `;
+
+        data.blankSubjects.forEach(function (subject) {
+
+            html += `
+                <div class="subject-result">
+                    • ${esc(subject.name)} (${unitLabel(subject.units)})
+                </div>
+            `;
+
+        });
+
+        html += `
+            </div>
+        `;
+
+    }
+
+
+    return html;
+
+}
+
+
+/* =========================================
+   SHARED RESULT PIECES
+   ========================================= */
+
+function completedSubjectsBox(subjects, heading) {
+
+    if (subjects.length === 0) {
+
+        return "";
+
+    }
+
+
+    let html = `
+        <div class="result-box">
+
+            <strong>${esc(heading)}</strong>
+    `;
+
+    subjects.forEach(function (subject) {
+
+        html += `
+            <div class="subject-result">
+                ${esc(subject.name)} (${unitLabel(subject.units)}):
+                <strong>${formatGrade(subject.grade)}</strong>
+            </div>
+        `;
+
+    });
+
+    html += `
+        </div>
+    `;
+
+    return html;
+
+}
+
+
+function blankSubjectsBox(subjects, heading) {
+
+    if (subjects.length === 0) {
+
+        return "";
+
+    }
+
+
+    let html = `
+        <div class="result-box">
+
+            <strong>${esc(heading)}</strong>
+
+            <p>These subjects are not yet included in your current GWA.</p>
+    `;
+
+    subjects.forEach(function (subject) {
+
+        html += `
+            <div class="subject-result">
+                • ${esc(subject.name)} (${unitLabel(subject.units)})
+            </div>
+        `;
+
+    });
+
+    html += `
+        </div>
+    `;
+
+    return html;
+
+}
+
+
+/*
+ * Shared front-of-page validation for both modes.
+ */
+
+function readInputs(containerIds) {
+
+    hideError();
+
+    const scale = getScale();
+
+    if (!scale.valid) {
+
+        showError(scale.message);
+
+        return null;
+
+    }
+
+
+    const target =
+        parseFloat(document.getElementById("targetGWA").value);
+
+    const cumLaude =
+        parseFloat(document.getElementById("cumLaudeGWA").value);
+
+
+    const targetCheck = validateTarget(target, scale, "Target GWA");
+
+    if (!targetCheck.valid) {
+
+        showError(targetCheck.message);
+
+        return null;
+
+    }
+
+
+    const cumLaudeCheck =
+        validateTarget(cumLaude, scale, "Cum Laude Target GWA");
+
+    if (!cumLaudeCheck.valid) {
+
+        showError(cumLaudeCheck.message);
+
+        return null;
+
+    }
+
+
+    const subjectCheck = validateSubjects(containerIds, scale);
+
+    if (!subjectCheck.valid) {
+
+        showError(subjectCheck.message);
+
+        return null;
+
+    }
+
+
+    return {
+        scale: scale,
+        target: target,
+        cumLaude: cumLaude
+    };
+
+}
+
+
+function showResults(title, gwa, html) {
+
+    document.getElementById("result").style.display = "block";
+
+    document.getElementById("resultTitle").textContent = title;
+
+    document.getElementById("gwaResult").textContent =
+        gwa === null ? "--" : formatGrade(gwa);
+
+    document.getElementById("resultDetails").innerHTML = html;
+
+}
+
+
+/* =========================================
+   SEMESTER CALCULATOR
+   ========================================= */
+
+function calculateSemester() {
+
+    const inputs = readInputs(["semesterSubjects"]);
+
+    if (!inputs) {
+
+        return;
+
+    }
+
+
+    const scale = inputs.scale;
+
+    const data = getSubjects("semesterSubjects");
+
+
+    if (data.totalUnits <= 0) {
+
+        showError("Please enter at least one subject with valid units.");
+
+        return;
+
+    }
+
+
+    const currentGWA = calculateCurrentGWA(data);
+
+    let html = "";
+
+
+    if (data.blankUnits > 0) {
+
+        if (currentGWA !== null) {
+
+            html += `
+                <div class="result-box">
+
+                    <strong>Current GWA</strong>
+
+                    <p>
+                        Your current GWA is
+                        <strong>${formatGrade(currentGWA)}</strong>,
+                        based on your completed subjects.
+                    </p>
+
+                </div>
+            `;
+
+        }
+
+        else {
+
+            html += `
+                <div class="result-box info-box">
+
+                    <strong>No Grades Yet</strong>
+
+                    <p>
+                        You currently have no completed grades.
+                        Your GWA will be calculated once grades are entered.
+                    </p>
+
+                </div>
+            `;
+
+        }
+
+    }
+
+    else {
+
+        html += `
+            <div class="result-box success-box">
+
+                <strong>Final Semester GWA</strong>
+
+                <p>
+                    All subjects have grades. Your final semester GWA is
+                    <strong>${formatGrade(currentGWA)}</strong>.
+                </p>
+
+            </div>
+        `;
+
+    }
+
+
+    html += completedSubjectsBox(data.completedSubjects, "Completed Subjects");
+
+    html += blankSubjectsBox(data.blankSubjects, "Subjects Without Grades");
+
+
+    if (!isNaN(inputs.target)) {
+
+        html += targetResult(
+            data,
+            inputs.target,
+            "What You Need to Reach Your Target",
+            scale
+        );
+
+    }
+
+
+    html += passingResult(data, scale);
+
+
+    if (!isNaN(inputs.cumLaude)) {
+
+        html += targetResult(
+            data,
+            inputs.cumLaude,
+            "Cum Laude GWA Target",
+            scale
+        );
+
+    }
+
+
+    showResults(
+        data.blankUnits > 0 ? "Your Current GWA" : "Your Final GWA",
+        currentGWA,
+        html
+    );
+
+}
+
+
+/* =========================================
+   YEARLY CALCULATOR
+   ========================================= */
+
+function semesterBox(semesterData, heading) {
+
+    if (semesterData.totalUnits <= 0) {
+
+        return "";
+
+    }
+
+
+    let html;
+
+
+    if (semesterData.completedUnits > 0) {
+
+        const gwa =
+            semesterData.completedWeighted / semesterData.completedUnits;
+
+        html = `
+            <div class="result-box">
+
+                <strong>${esc(heading)} GWA</strong>
+
+                <p>
+                    Your ${esc(heading)} GWA is
+                    <strong>${formatGrade(gwa)}</strong>
+                    ${semesterData.blankUnits > 0
+                        ? ", based only on subjects that currently have grades"
+                        : ""}.
+                </p>
+        `;
+
+    }
+
+    else {
+
+        html = `
+            <div class="result-box info-box">
+
+                <strong>${esc(heading)}</strong>
+
+                <p>No grades have been entered for this semester yet.</p>
+        `;
+
+    }
+
+
+    semesterData.completedSubjects.forEach(function (subject) {
+
+        html += `
+            <div class="subject-result">
+                ${esc(subject.name)} (${unitLabel(subject.units)}):
+                <strong>${formatGrade(subject.grade)}</strong>
+            </div>
+        `;
+
+    });
+
+
+    if (semesterData.blankSubjects.length > 0) {
+
+        html += `
+            <p><strong>Subjects without grades:</strong></p>
+        `;
+
+        semesterData.blankSubjects.forEach(function (subject) {
+
+            html += `
+                <div class="subject-result">
+                    • ${esc(subject.name)} (${unitLabel(subject.units)})
+                </div>
+            `;
+
+        });
+
+    }
+
+
+    html += `
+        </div>
+    `;
+
+    return html;
+
+}
+
+
+function calculateYearly() {
+
+    const inputs = readInputs([
+        "firstSemesterSubjects",
+        "secondSemesterSubjects"
+    ]);
+
+    if (!inputs) {
+
+        return;
+
+    }
+
+
+    const scale = inputs.scale;
+
+    const first = getSubjects("firstSemesterSubjects");
+    const second = getSubjects("secondSemesterSubjects");
+
+
+    const yearData = {
+
+        completedWeighted:
+            first.completedWeighted + second.completedWeighted,
+
+        completedUnits:
+            first.completedUnits + second.completedUnits,
+
+        blankUnits:
+            first.blankUnits + second.blankUnits,
+
+        totalUnits:
+            first.totalUnits + second.totalUnits,
+
+        completedSubjects:
+            first.completedSubjects.concat(second.completedSubjects),
+
+        blankSubjects:
+            first.blankSubjects.concat(second.blankSubjects)
+
+    };
+
+
+    if (yearData.totalUnits <= 0) {
+
+        showError("Please enter at least one subject with valid units.");
+
+        return;
+
+    }
+
+
+    const currentYearGWA = calculateCurrentGWA(yearData);
+
+    let html = "";
+
+
+    html += semesterBox(first, "1st Semester");
+
+    html += semesterBox(second, "2nd Semester");
+
+
+    if (currentYearGWA !== null) {
+
+        html += `
+            <div class="result-box ${yearData.blankUnits > 0 ? "" : "success-box"}">
+
+                <strong>
+                    ${yearData.blankUnits > 0
+                        ? "Current Yearly GWA"
+                        : "Final Yearly GWA"}
+                </strong>
+
+                <p>
+                    Your ${yearData.blankUnits > 0 ? "current" : "final"}
+                    yearly GWA is
+                    <strong>${formatGrade(currentYearGWA)}</strong>${
+                        yearData.blankUnits > 0
+                            ? ", based only on subjects that currently have grades"
+                            : ""}.
+                </p>
+
+            </div>
+        `;
+
+    }
+
+    else {
+
+        html += `
+            <div class="result-box info-box">
+
+                <strong>No Grades Yet</strong>
+
+                <p>
+                    You currently have no graded subjects.
+                    Your yearly GWA will appear once grades are entered.
+                </p>
+
+            </div>
+        `;
+
+    }
+
+
+    if (!isNaN(inputs.target)) {
+
+        html += targetResult(
+            yearData,
+            inputs.target,
+            "What You Need to Reach Your Yearly Target",
+            scale
+        );
+
+    }
+
+
+    html += passingResult(yearData, scale);
+
+
+    if (!isNaN(inputs.cumLaude)) {
+
+        html += targetResult(
+            yearData,
+            inputs.cumLaude,
+            "Cum Laude GWA Target",
+            scale
+        );
+
+    }
+
+
+    showResults(
+        yearData.blankUnits > 0
+            ? "Your Current Yearly GWA"
+            : "Your Final Yearly GWA",
+        currentYearGWA,
+        html
+    );
+
+}
+
+
+/* =========================================
+   MAIN CALCULATE
+   ========================================= */
+
+function calculate() {
+
+    if (currentMode === "semester") {
+
+        calculateSemester();
+
+    }
+
+    else {
+
+        calculateYearly();
+
+    }
+
+}
+
+
+/* =========================================
+   SAVING AND RESTORING
+
+   Wrapped in try / catch because localStorage
+   can be unavailable in private browsing.
+   ========================================= */
+
+const CONTAINERS = [
+    "semesterSubjects",
+    "firstSemesterSubjects",
+    "secondSemesterSubjects"
+];
+
+
+function readContainer(containerId) {
+
+    const rows =
+        document
+        .getElementById(containerId)
+        .querySelectorAll(".subject-row");
+
+    return Array.from(rows).map(function (row) {
+
+        return {
+            name: row.querySelector(".subject-name").value,
+            units: row.querySelector(".units").value,
+            grade: row.querySelector(".grade").value,
+            needsGrade: row.querySelector(".needs-grade").checked
+        };
+
+    });
+
+}
+
+
+function saveState() {
+
+    if (restoring) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const state = {
+            mode: currentMode,
+            highestGrade: document.getElementById("highestGrade").value,
+            lowestGrade: document.getElementById("lowestGrade").value,
+            passingGrade: document.getElementById("passingGrade").value,
+            gradeStep: document.getElementById("gradeStep").value,
+            targetGWA: document.getElementById("targetGWA").value,
+            cumLaudeGWA: document.getElementById("cumLaudeGWA").value,
+            subjects: {}
+        };
+
+        CONTAINERS.forEach(function (id) {
+
+            state.subjects[id] = readContainer(id);
+
+        });
+
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+
+    }
+
+    catch (error) {
+
+        /* Saving is a convenience only. Ignore failures. */
+
+    }
+
+}
+
+
+function loadState() {
+
+    let state = null;
+
+
+    try {
+
+        const raw = localStorage.getItem(STORAGE_KEY);
+
+        if (!raw) {
+
+            return false;
+
+        }
+
+        state = JSON.parse(raw);
+
+    }
+
+    catch (error) {
+
+        return false;
+
+    }
+
+
+    if (!state || typeof state !== "object") {
+
+        return false;
+
+    }
+
+
+    restoring = true;
+
+
+    try {
+
+        [
+            "highestGrade",
+            "lowestGrade",
+            "passingGrade",
+            "gradeStep",
+            "targetGWA",
+            "cumLaudeGWA"
+        ].forEach(function (id) {
+
+            if (typeof state[id] === "string") {
+
+                document.getElementById(id).value = state[id];
+
+            }
+
+        });
+
+
+        CONTAINERS.forEach(function (id) {
+
+            const saved =
+                state.subjects && Array.isArray(state.subjects[id])
+                    ? state.subjects[id]
+                    : [];
+
+            document.getElementById(id).innerHTML = "";
+
+            if (saved.length === 0) {
+
+                addSubject(id);
+
+            }
+
+            else {
+
+                saved.forEach(function (values) {
+
+                    addSubject(id, values);
+
+                });
+
+            }
+
+        });
+
+
+        setModeSilently(state.mode === "yearly" ? "yearly" : "semester");
+
+    }
+
+    finally {
+
+        restoring = false;
+
+    }
+
+
+    updateCheckboxes();
+
+    return true;
+
+}
+
+
+function setModeSilently(mode) {
+
+    const wasRestoring = restoring;
+
+    restoring = true;
+
+    setMode(mode);
+
+    restoring = wasRestoring;
+
+}
+
+
+function resetAll() {
+
+    try {
+
+        localStorage.removeItem(STORAGE_KEY);
+
+    }
+
+    catch (error) {
+
+        /* Ignore. */
+
+    }
+
+
+    restoring = true;
+
+    document.getElementById("highestGrade").value = "1.00";
+    document.getElementById("lowestGrade").value = "5.00";
+    document.getElementById("passingGrade").value = "3.00";
+    document.getElementById("gradeStep").value = "";
+    document.getElementById("targetGWA").value = "";
+    document.getElementById("cumLaudeGWA").value = "";
+
+    CONTAINERS.forEach(function (id) {
+
+        document.getElementById(id).innerHTML = "";
+
+        addSubject(id);
+
+    });
+
+    restoring = false;
+
+    setMode("semester");
+
+    updateCheckboxes();
+
+    clearResults();
+
+}
+
+
+/* =========================================
+   INITIAL SETUP
+   ========================================= */
+
+if (!loadState()) {
+
+    restoring = true;
+
+    CONTAINERS.forEach(function (id) {
+
+        addSubject(id);
+
+    });
+
+    restoring = false;
+
+    updateCheckboxes();
+
+}
+
+
+</script>
+
+</body>
+
+</html>
